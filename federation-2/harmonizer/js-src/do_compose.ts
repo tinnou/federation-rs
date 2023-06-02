@@ -12,12 +12,19 @@ declare let done: (compositionResult: CompositionResult) => void;
 declare let serviceList: { sdl: string; name: string; url?: string }[];
 
 try {
-  // /**
-  //  * @type {{ errors: Error[], supergraphSdl?: undefined, hints: undefined } | { errors?: undefined, supergraphSdl: string, hints: string }}
-  //  */
+  /**
+   * @type {{ errors: Error[], supergraphSdl?: undefined, hints: undefined } | { errors?: undefined, supergraphSdl: string, hints: BuildHint[] }}
+   */
   const composed = composition_bridge.composition(serviceList);
 
   done(composed);
 } catch (err) {
-  done({ Err: [{ message: err.toString() }] });
+  done({
+    Err: [
+      {
+        message: err.toString() + " stackTrace: " + err.stack,
+        code: "INTERNAL_FAILURE",
+      },
+    ],
+  });
 }
